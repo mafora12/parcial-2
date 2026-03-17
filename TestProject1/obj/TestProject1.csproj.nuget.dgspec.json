@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\MARIANA\\Documents\\GitHub\\parcial-2\\Parcial-2\\Parcial-2.csproj": {}
+    "C:\\Users\\MARIANA\\Documents\\GitHub\\parcial-2\\TestProject1\\TestProject1.csproj": {}
   },
   "projects": {
-    "C:\\Users\\MARIANA\\Documents\\GitHub\\parcial-2\\Parcial-2\\Parcial-2.csproj": {
+    "C:\\Users\\MARIANA\\Documents\\GitHub\\parcial-2\\TestProject1\\TestProject1.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\MARIANA\\Documents\\GitHub\\parcial-2\\Parcial-2\\Parcial-2.csproj",
-        "projectName": "Parcial-2",
-        "projectPath": "C:\\Users\\MARIANA\\Documents\\GitHub\\parcial-2\\Parcial-2\\Parcial-2.csproj",
+        "projectUniqueName": "C:\\Users\\MARIANA\\Documents\\GitHub\\parcial-2\\TestProject1\\TestProject1.csproj",
+        "projectName": "TestProject1",
+        "projectPath": "C:\\Users\\MARIANA\\Documents\\GitHub\\parcial-2\\TestProject1\\TestProject1.csproj",
         "packagesPath": "C:\\Users\\MARIANA\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\MARIANA\\Documents\\GitHub\\parcial-2\\Parcial-2\\obj\\",
+        "outputPath": "C:\\Users\\MARIANA\\Documents\\GitHub\\parcial-2\\TestProject1\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -50,17 +50,25 @@
         "net9.0": {
           "targetAlias": "net9.0",
           "dependencies": {
-            "Microsoft.DotNet.ILCompiler": {
-              "suppressParent": "All",
+            "Microsoft.NET.Test.Sdk": {
               "target": "Package",
-              "version": "[9.0.9, )",
-              "autoReferenced": true
+              "version": "[17.12.0, )"
             },
-            "Microsoft.NET.ILLink.Tasks": {
-              "suppressParent": "All",
+            "NUnit": {
               "target": "Package",
-              "version": "[9.0.9, )",
-              "autoReferenced": true
+              "version": "[4.2.2, )"
+            },
+            "NUnit.Analyzers": {
+              "target": "Package",
+              "version": "[4.4.0, )"
+            },
+            "NUnit3TestAdapter": {
+              "target": "Package",
+              "version": "[4.6.0, )"
+            },
+            "coverlet.collector": {
+              "target": "Package",
+              "version": "[6.0.2, )"
             }
           },
           "imports": [
@@ -74,12 +82,6 @@
           ],
           "assetTargetFallback": true,
           "warn": true,
-          "downloadDependencies": [
-            {
-              "name": "runtime.win-x64.Microsoft.DotNet.ILCompiler",
-              "version": "[9.0.9, 9.0.9]"
-            }
-          ],
           "frameworkReferences": {
             "Microsoft.NETCore.App": {
               "privateAssets": "all"
