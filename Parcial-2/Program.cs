@@ -1,4 +1,4 @@
-
+﻿
 // Program.cs
 // Tienda para videojuego: compra y venta de objetos
 // Compatible con .NET 7
@@ -436,5 +436,3 @@ namespace GameStoreExample
         }
     }
 }
-
-
