@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace GameStoreExample
+namespace GameStore
 {
     public enum ItemCategory { Weapon, Armor, Accessory, Supply }
 
@@ -47,7 +47,6 @@ namespace GameStoreExample
         }
     }
 
-    // Resultado de operaciones para uso en UI/menús
     public class OperationResult
     {
         public bool Success { get; }

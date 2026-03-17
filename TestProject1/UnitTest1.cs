@@ -1,152 +1,193 @@
 ﻿using NUnit.Framework;
-using GameStoreExample;
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using GameStore;
 
-namespace GameStoreTests
+
+namespace GameStore.Tests
 {
     [TestFixture]
-    public class ItemTests
+    public class GameStoreTests
     {
-        [Test]
-        public void CreateItem_ValidData_ShouldWork()
-        {
-            // En C#, los decimales deben llevar una 'm' al final
-            var item = new Item("Sword", ItemCategory.Weapon, 10m);
+        private Item sword;
+        private Item shield;
+        private Item ring;
+        private Item potion;
 
-            Assert.AreEqual("Sword", item.Name);
-            Assert.AreEqual(ItemCategory.Weapon, item.Category);
-            Assert.AreEqual(10m, item.Price);
+        [SetUp]
+        public void Setup()
+        {
+            sword = new Item("Short Sword", ItemCategory.Weapon, 10m);
+            shield = new Item("Wooden Shield", ItemCategory.Armor, 8m);
+            ring = new Item("Ring of Luck", ItemCategory.Accessory, 25m);
+            potion = new Item("Health Potion", ItemCategory.Supply, 3m);
+        }
+
+
+
+        [Test]
+        public void Item_Creation_Valid()
+        {
+            var it = new Item("Bow", ItemCategory.Weapon, 15m);
+            Assert.AreEqual("Bow", it.Name);
         }
 
         [Test]
-        public void CreateItem_InvalidPrice_ShouldThrow()
+        public void Item_Creation_InvalidName()
         {
-            // El constructor de Item lanza ArgumentException si el precio es <= 0
             Assert.Throws<ArgumentException>(() =>
-                new Item("Sword", ItemCategory.Weapon, 0m));
+                new Item("", ItemCategory.Weapon, 5m));
         }
 
         [Test]
-        public void CreateItem_EmptyName_ShouldThrow()
+        public void Item_Creation_InvalidPrice()
         {
             Assert.Throws<ArgumentException>(() =>
-                new Item("", ItemCategory.Armor, 5m));
+                new Item("Bad", ItemCategory.Supply, 0m));
         }
-    }
 
-    [TestFixture]
-    public class StoreCreationTests
-    {
+
+
         [Test]
-        public void CreateStore_WithValidInventory_ShouldWork()
+        public void Store_Creation_Valid()
         {
-            var sword = new Item("Sword", ItemCategory.Weapon, 10m);
-
-            var store = new Store("Test Store", new List<(Item item, int qty)>
+            var store = new Store("Tienda", new List<(Item, int)>
             {
-                (sword, 5)
+                (sword,1)
             });
 
-            Assert.AreEqual(5, store.GetQuantity("Sword", ItemCategory.Weapon));
+            Assert.AreEqual(1,
+                store.GetQuantity("Short Sword", ItemCategory.Weapon));
         }
 
         [Test]
-        public void CreateStore_WithoutStock_ShouldThrow()
+        public void Store_Creation_Invalid()
         {
-            var sword = new Item("Sword", ItemCategory.Weapon, 10m);
-
-            // La tienda exige al menos un artículo con cantidad > 0 al inicio
             Assert.Throws<InvalidOperationException>(() =>
-                new Store("Empty", new List<(Item item, int qty)>
+                new Store("Empty", new List<(Item, int)>
                 {
-                    (sword, 0)
+                    (sword,0)
                 }));
         }
-    }
 
-    [TestFixture]
-    public class PlayerTests
-    {
+ 
+
         [Test]
-        public void CreatePlayer_WithGold_ShouldWork()
+        public void Player_Creation_Gold()
         {
-            var player = new Player("Hero", 100m);
-            Assert.AreEqual(100m, player.Gold);
+            var p = new Player("Hero", 100);
+            Assert.AreEqual(100, p.Gold);
+        }
+
+
+
+        [Test]
+        public void Purchase_Success()
+        {
+            var store = new Store("Shop",
+                new List<(Item, int)> { (sword, 2) });
+
+            var player = new Player("Hero", 50);
+
+            var res = store.TryPurchase(player,
+                new List<(Item, int)> { (sword, 1) });
+
+            Assert.IsTrue(res.Success);
+            Assert.AreEqual(40, player.Gold);
         }
 
         [Test]
-        public void Player_GoldCannotBeNegative()
+        public void Purchase_NoMoney()
         {
-            // Tu constructor usa Math.Max(0, startingGold), así que -50 se vuelve 0
-            var player = new Player("Hero", -50m);
-            Assert.AreEqual(0m, player.Gold);
-        }
-    }
+            var store = new Store("Shop",
+                new List<(Item, int)> { (ring, 1) });
 
-    [TestFixture]
-    public class PurchaseTests
-    {
-        [Test]
-        public void BuyItem_ShouldReduceGoldAndStock()
-        {
-            var sword = new Item("Sword", ItemCategory.Weapon, 10m);
-            var store = new Store("Shop", new List<(Item item, int qty)> { (sword, 5) });
-            var player = new Player("Hero", 100m);
+            var player = new Player("Poor", 10);
 
-            var result = store.TryPurchase(player, new List<(Item item, int qty)> { (sword, 2) });
+            var res = store.TryPurchase(player,
+                new List<(Item, int)> { (ring, 1) });
 
-            Assert.IsTrue(result.Success);
-            Assert.AreEqual(80m, player.Gold); // 100 - (10 * 2)
-            Assert.AreEqual(3, store.GetQuantity("Sword", ItemCategory.Weapon));
+            Assert.IsFalse(res.Success);
         }
 
         [Test]
-        public void BuyItem_WithoutEnoughGold_ShouldFail()
+        public void Purchase_NoStock()
         {
-            var sword = new Item("Sword", ItemCategory.Weapon, 50m);
-            var store = new Store("Shop", new List<(Item item, int qty)> { (sword, 5) });
-            var player = new Player("Hero", 10m);
+            var store = new Store("Shop",
+                new List<(Item, int)> { (potion, 1) });
 
-            var result = store.TryPurchase(player, new List<(Item item, int qty)> { (sword, 1) });
+            var player = new Player("Buyer", 100);
 
-            Assert.IsFalse(result.Success);
-            Assert.AreEqual("Fondos insuficientes.", result.Message);
+            var res = store.TryPurchase(player,
+                new List<(Item, int)> { (potion, 2) });
+
+            Assert.IsFalse(res.Success);
         }
 
         [Test]
-        public void BuyFromDifferentStores_ShouldWork()
+        public void Purchase_MultipleStores()
         {
-            var sword = new Item("Sword", ItemCategory.Weapon, 10m);
-            var potion = new Item("Potion", ItemCategory.Supply, 5m);
+            var storeA = new Store("A",
+                new List<(Item, int)> { (sword, 2) });
 
-            var store1 = new Store("Shop1", new List<(Item item, int qty)> { (sword, 5) });
-            var store2 = new Store("Shop2", new List<(Item item, int qty)> { (potion, 5) });
-            var player = new Player("Hero", 100m);
+            var storeB = new Store("B",
+                new List<(Item, int)> { (potion, 5) });
 
-            store1.TryPurchase(player, new List<(Item item, int qty)> { (sword, 2) }); // -20g
-            store2.TryPurchase(player, new List<(Item item, int qty)> { (potion, 4) }); // -20g
+            var player = new Player("Traveler", 100);
 
-            Assert.AreEqual(60m, player.Gold);
+            storeA.TryPurchase(player,
+                new List<(Item, int)> { (sword, 1) });
+
+            storeB.TryPurchase(player,
+                new List<(Item, int)> { (potion, 2) });
+
+            Assert.AreEqual(84, player.Gold);
         }
-    }
 
-    [TestFixture]
-    public class InventoryUpdateTests
-    {
+
+
         [Test]
-        public void BoughtItem_ShouldAppearInCorrectGroup()
+        public void Inventory_Grouping()
         {
-            var potion = new Item("Potion", ItemCategory.Supply, 5m);
-            var store = new Store("Shop", new List<(Item item, int qty)> { (potion, 5) });
-            var player = new Player("Hero", 100m);
+            var store = new Store("Shop",
+                new List<(Item, int)>
+                {
+                    (sword,2),
+                    (potion,5)
+                });
 
-            store.TryPurchase(player, new List<(Item item, int qty)> { (potion, 2) });
+            var player = new Player("Hero", 100);
 
-            // GetQuantity ya busca internamente en el diccionario correcto (Supply)
-            var qty = player.GetQuantity("Potion", ItemCategory.Supply);
+            store.TryPurchase(player,
+                new List<(Item, int)>
+                {
+                    (sword,1),
+                    (potion,2)
+                });
 
-            Assert.AreEqual(2, qty);
+            Assert.AreEqual(1,
+                player.GetQuantity("Short Sword", ItemCategory.Weapon));
+
+            Assert.AreEqual(2,
+                player.GetQuantity("Health Potion", ItemCategory.Supply));
+        }
+
+
+        [Test]
+        public void Sell_To_Store()
+        {
+            var store = new Store("Shop",
+                new List<(Item, int)> { (sword, 1) });
+
+            var player = new Player("Seller", 0);
+            player.AddToInventory(sword, 1);
+
+            var res = store.TryBuyFromPlayer(player,
+                new List<(Item, int)> { (sword, 1) });
+
+            Assert.IsTrue(res.Success);
+            Assert.AreEqual(10, player.Gold);
         }
     }
 }

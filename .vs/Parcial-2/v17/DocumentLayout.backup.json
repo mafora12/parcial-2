@@ -3,12 +3,16 @@
   "WorkspaceRootPath": "C:\\Users\\MARIANA\\Documents\\GitHub\\parcial-2\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{799BD685-BD8C-454D-9104-AB226E695F34}|Parcial-2\\Parcial-2.csproj|c:\\users\\mariana\\documents\\github\\parcial-2\\parcial-2\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{799BD685-BD8C-454D-9104-AB226E695F34}|Parcial-2\\Parcial-2.csproj|solutionrelative:parcial-2\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{6F84B464-D2A2-BADB-55FE-4525AFA1BDD6}|TestProject1\\TestProject1.csproj|c:\\users\\mariana\\documents\\github\\parcial-2\\testproject1\\unittest1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{6F84B464-D2A2-BADB-55FE-4525AFA1BDD6}|TestProject1\\TestProject1.csproj|solutionrelative:testproject1\\unittest1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{799BD685-BD8C-454D-9104-AB226E695F34}|Parcial-2\\Parcial-2.csproj|c:\\users\\mariana\\documents\\github\\parcial-2\\parcial-2\\parcial-2.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|",
       "RelativeMoniker": "D:0:0:{799BD685-BD8C-454D-9104-AB226E695F34}|Parcial-2\\Parcial-2.csproj|solutionrelative:parcial-2\\parcial-2.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{799BD685-BD8C-454D-9104-AB226E695F34}|Parcial-2\\Parcial-2.csproj|c:\\users\\mariana\\documents\\github\\parcial-2\\parcial-2\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{799BD685-BD8C-454D-9104-AB226E695F34}|Parcial-2\\Parcial-2.csproj|solutionrelative:parcial-2\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -18,8 +22,34 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 1,
+          "SelectedChildIndex": 0,
           "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "UnitTest1.cs",
+              "DocumentMoniker": "C:\\Users\\MARIANA\\Documents\\GitHub\\parcial-2\\TestProject1\\UnitTest1.cs",
+              "RelativeDocumentMoniker": "TestProject1\\UnitTest1.cs",
+              "ToolTip": "C:\\Users\\MARIANA\\Documents\\GitHub\\parcial-2\\TestProject1\\UnitTest1.cs",
+              "RelativeToolTip": "TestProject1\\UnitTest1.cs",
+              "ViewState": "AgIAAAUAAAAAAAAAAAAAAAUAAAAKAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-03-17T03:34:58.825Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "Program.cs",
+              "DocumentMoniker": "C:\\Users\\MARIANA\\Documents\\GitHub\\parcial-2\\Parcial-2\\Program.cs",
+              "RelativeDocumentMoniker": "Parcial-2\\Program.cs",
+              "ToolTip": "C:\\Users\\MARIANA\\Documents\\GitHub\\parcial-2\\Parcial-2\\Program.cs",
+              "RelativeToolTip": "Parcial-2\\Program.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAQAAAAKAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-03-17T02:11:40.663Z",
+              "EditorCaption": ""
+            },
             {
               "$type": "Document",
               "DocumentIndex": 1,
@@ -30,19 +60,7 @@
               "RelativeToolTip": "Parcial-2\\Parcial-2.csproj",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAA0AAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
-              "WhenOpened": "2026-03-17T03:29:41.464Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 0,
-              "Title": "Program.cs",
-              "DocumentMoniker": "C:\\Users\\MARIANA\\Documents\\GitHub\\parcial-2\\Parcial-2\\Program.cs",
-              "RelativeDocumentMoniker": "Parcial-2\\Program.cs",
-              "ToolTip": "C:\\Users\\MARIANA\\Documents\\GitHub\\parcial-2\\Parcial-2\\Program.cs",
-              "RelativeToolTip": "Parcial-2\\Program.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAACUAAAAtAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-03-17T02:11:40.663Z",
+              "WhenOpened": "2026-03-17T03:29:41.464Z",
               "EditorCaption": ""
             }
           ]

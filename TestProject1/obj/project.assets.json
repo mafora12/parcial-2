@@ -346,6 +346,16 @@
             "related": ".xml"
           }
         }
+      },
+      "Parcial-2/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v9.0",
+        "compile": {
+          "bin/placeholder/Parcial-2.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/Parcial-2.dll": {}
+        }
       }
     }
   },
@@ -793,6 +803,11 @@
         "useSharedDesignerContext.txt",
         "version.txt"
       ]
+    },
+    "Parcial-2/1.0.0": {
+      "type": "project",
+      "path": "../Parcial-2/Parcial-2.csproj",
+      "msbuildProject": "../Parcial-2/Parcial-2.csproj"
     }
   },
   "projectFileDependencyGroups": {
@@ -801,6 +816,7 @@
       "NUnit >= 4.2.2",
       "NUnit.Analyzers >= 4.4.0",
       "NUnit3TestAdapter >= 4.6.0",
+      "Parcial-2 >= 1.0.0",
       "coverlet.collector >= 6.0.2"
     ]
   },
@@ -835,7 +851,11 @@
       "frameworks": {
         "net9.0": {
           "targetAlias": "net9.0",
-          "projectReferences": {}
+          "projectReferences": {
+            "C:\\Users\\MARIANA\\Documents\\GitHub\\parcial-2\\Parcial-2\\Parcial-2.csproj": {
+              "projectPath": "C:\\Users\\MARIANA\\Documents\\GitHub\\parcial-2\\Parcial-2\\Parcial-2.csproj"
+            }
+          }
         }
       },
       "warningProperties": {
