@@ -32,7 +32,7 @@
               "RelativeDocumentMoniker": "TestProject1\\UnitTest1.cs",
               "ToolTip": "C:\\Users\\MARIANA\\Documents\\GitHub\\parcial-2\\TestProject1\\UnitTest1.cs",
               "RelativeToolTip": "TestProject1\\UnitTest1.cs",
-              "ViewState": "AgIAAF8AAAAAAAAAAAAAAG8AAAAvAAAAAAAAAA==",
+              "ViewState": "AgIAACYAAAAAAAAAAAAgwLAAAAABAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2026-03-17T03:34:58.825Z",
               "EditorCaption": ""
@@ -47,8 +47,7 @@
               "RelativeToolTip": "Parcial-2\\Program.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAkAAAAFAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-03-17T02:11:40.663Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-03-17T02:11:40.663Z"
             },
             {
               "$type": "Document",
@@ -60,8 +59,7 @@
               "RelativeToolTip": "Parcial-2\\Parcial-2.csproj",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAA0AAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
-              "WhenOpened": "2026-03-17T03:29:41.464Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-03-17T03:29:41.464Z"
             }
           ]
         }
