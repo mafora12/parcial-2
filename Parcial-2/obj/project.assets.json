@@ -2,13 +2,13 @@
   "version": 3,
   "targets": {
     "net9.0": {
-      "Microsoft.DotNet.ILCompiler/9.0.6": {
+      "Microsoft.DotNet.ILCompiler/9.0.9": {
         "type": "package",
         "build": {
           "build/Microsoft.DotNet.ILCompiler.props": {}
         }
       },
-      "Microsoft.NET.ILLink.Tasks/9.0.6": {
+      "Microsoft.NET.ILLink.Tasks/9.0.9": {
         "type": "package",
         "build": {
           "build/Microsoft.NET.ILLink.Tasks.props": {}
@@ -17,10 +17,10 @@
     }
   },
   "libraries": {
-    "Microsoft.DotNet.ILCompiler/9.0.6": {
-      "sha512": "O7Row/kOgEA3PXpeCVKpDJ9ooAoJDoKoxpZC86voOAwV2NA1jTbQ0Nn0VCuoTT/IvU0T7YNlPldAS0mOrppXmw==",
+    "Microsoft.DotNet.ILCompiler/9.0.9": {
+      "sha512": "jbi92xl2xcwGfdD/XSgOtOtQM5Ra3uXsiFuEyLnqwpHXeWHAutabi/LDu9VQbcuCqmvwOhrA3iFcvTIuFFQ0AQ==",
       "type": "package",
-      "path": "microsoft.dotnet.ilcompiler/9.0.6",
+      "path": "microsoft.dotnet.ilcompiler/9.0.9",
       "hasTools": true,
       "files": [
         ".nupkg.metadata",
@@ -39,17 +39,17 @@
         "build/NativeAOT.natvis",
         "build/WindowsAPIs.txt",
         "build/findvcvarsall.bat",
-        "microsoft.dotnet.ilcompiler.9.0.6.nupkg.sha512",
+        "microsoft.dotnet.ilcompiler.9.0.9.nupkg.sha512",
         "microsoft.dotnet.ilcompiler.nuspec",
         "runtime.json",
         "tools/netstandard/ILCompiler.Build.Tasks.deps.json",
         "tools/netstandard/ILCompiler.Build.Tasks.dll"
       ]
     },
-    "Microsoft.NET.ILLink.Tasks/9.0.6": {
-      "sha512": "TXy3SbJzGXQbxxIxCjdrp8bwEyTDImyYNpTpd6v7P3JL2Y7dno8EYG7dPezfYTa5SoWKdhbH9cbnwHHs3BR5gA==",
+    "Microsoft.NET.ILLink.Tasks/9.0.9": {
+      "sha512": "cHi1os/s6aobEgNkbOh/jW+ru//rHuedvj4PmTh2mMY7et/mJjqphBeXeKCesDvMd0+E2JyX9EPZZC4VRKslXg==",
       "type": "package",
-      "path": "microsoft.net.illink.tasks/9.0.6",
+      "path": "microsoft.net.illink.tasks/9.0.9",
       "hasTools": true,
       "files": [
         ".nupkg.metadata",
@@ -63,7 +63,7 @@
         "build/Microsoft.NET.ILLink.Analyzers.props",
         "build/Microsoft.NET.ILLink.Tasks.props",
         "build/Microsoft.NET.ILLink.targets",
-        "microsoft.net.illink.tasks.9.0.6.nupkg.sha512",
+        "microsoft.net.illink.tasks.9.0.9.nupkg.sha512",
         "microsoft.net.illink.tasks.nuspec",
         "tools/net472/ILLink.Tasks.dll",
         "tools/net472/ILLink.Tasks.dll.config",
@@ -100,28 +100,28 @@
   },
   "projectFileDependencyGroups": {
     "net9.0": [
-      "Microsoft.DotNet.ILCompiler >= 9.0.6",
-      "Microsoft.NET.ILLink.Tasks >= 9.0.6"
+      "Microsoft.DotNet.ILCompiler >= 9.0.9",
+      "Microsoft.NET.ILLink.Tasks >= 9.0.9"
     ]
   },
   "packageFolders": {
-    "C:\\Users\\hjuan\\.nuget\\packages\\": {},
+    "C:\\Users\\MARIANA\\.nuget\\packages\\": {},
     "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\hjuan\\Desktop\\parcial-2\\1121212\\Parcial-2\\Parcial-2.csproj",
+      "projectUniqueName": "C:\\Users\\MARIANA\\Documents\\GitHub\\parcial-2\\Parcial-2\\Parcial-2.csproj",
       "projectName": "Parcial-2",
-      "projectPath": "C:\\Users\\hjuan\\Desktop\\parcial-2\\1121212\\Parcial-2\\Parcial-2.csproj",
-      "packagesPath": "C:\\Users\\hjuan\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\hjuan\\Desktop\\parcial-2\\1121212\\Parcial-2\\obj\\",
+      "projectPath": "C:\\Users\\MARIANA\\Documents\\GitHub\\parcial-2\\Parcial-2\\Parcial-2.csproj",
+      "packagesPath": "C:\\Users\\MARIANA\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\MARIANA\\Documents\\GitHub\\parcial-2\\Parcial-2\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
       ],
       "configFilePaths": [
-        "C:\\Users\\hjuan\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Users\\MARIANA\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
@@ -130,7 +130,6 @@
       ],
       "sources": {
         "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
-        "C:\\Program Files\\dotnet\\library-packs": {},
         "https://api.nuget.org/v3/index.json": {}
       },
       "frameworks": {
@@ -158,13 +157,13 @@
           "Microsoft.DotNet.ILCompiler": {
             "suppressParent": "All",
             "target": "Package",
-            "version": "[9.0.6, )",
+            "version": "[9.0.9, )",
             "autoReferenced": true
           },
           "Microsoft.NET.ILLink.Tasks": {
             "suppressParent": "All",
             "target": "Package",
-            "version": "[9.0.6, )",
+            "version": "[9.0.9, )",
             "autoReferenced": true
           }
         },
@@ -182,7 +181,7 @@
         "downloadDependencies": [
           {
             "name": "runtime.win-x64.Microsoft.DotNet.ILCompiler",
-            "version": "[9.0.6, 9.0.6]"
+            "version": "[9.0.9, 9.0.9]"
           }
         ],
         "frameworkReferences": {
@@ -190,7 +189,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.301/PortableRuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.305/PortableRuntimeIdentifierGraph.json"
       }
     }
   }

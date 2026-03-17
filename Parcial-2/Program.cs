@@ -112,21 +112,19 @@ namespace GameStoreExample
             return _inventory.TryGetValue(key, out var entry) ? entry.Quantity : 0;
         }
 
-        // API pública: obtener una copia del inventario para mostrar en menús
-        // Devuelve tuplas (Item, Quantity)
         public List<(Item item, int qty)> GetInventorySnapshot()
         {
             return _inventory.Values.Select(e => (e.Item, e.Quantity)).ToList();
         }
 
-        // API pública: buscar un Item en la tienda por nombre y categoría (null si no existe)
+
         public Item? FindItem(string name, ItemCategory category)
         {
             var key = MakeKey(name, category);
             return _inventory.TryGetValue(key, out var entry) ? entry.Item : null;
         }
 
-        // Compra atómica por lista de (Item, qty) — útil para menús que construyen un carrito
+
         public OperationResult TryPurchase(Player player, List<(Item item, int qty)> cart)
         {
             if (player == null) return OperationResult.Fail("Jugador inválido.");
@@ -150,7 +148,7 @@ namespace GameStoreExample
 
             if (player.Gold < total) return OperationResult.Fail("Fondos insuficientes.");
 
-            // Aplicar cambios
+
             player.Gold -= total;
             foreach (var (key, qty, price) in checks)
             {

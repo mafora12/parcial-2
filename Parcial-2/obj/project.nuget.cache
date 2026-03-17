@@ -1,12 +1,12 @@
 {
   "version": 2,
-  "dgSpecHash": "Fdx2HLyBtn0=",
+  "dgSpecHash": "A9mlFy50Ld8=",
   "success": true,
-  "projectFilePath": "C:\\Users\\hjuan\\Desktop\\parcial-2\\1121212\\Parcial-2\\Parcial-2.csproj",
+  "projectFilePath": "C:\\Users\\MARIANA\\Documents\\GitHub\\parcial-2\\Parcial-2\\Parcial-2.csproj",
   "expectedPackageFiles": [
-    "C:\\Users\\hjuan\\.nuget\\packages\\microsoft.dotnet.ilcompiler\\9.0.6\\microsoft.dotnet.ilcompiler.9.0.6.nupkg.sha512",
-    "C:\\Users\\hjuan\\.nuget\\packages\\microsoft.net.illink.tasks\\9.0.6\\microsoft.net.illink.tasks.9.0.6.nupkg.sha512",
-    "C:\\Users\\hjuan\\.nuget\\packages\\runtime.win-x64.microsoft.dotnet.ilcompiler\\9.0.6\\runtime.win-x64.microsoft.dotnet.ilcompiler.9.0.6.nupkg.sha512"
+    "C:\\Users\\MARIANA\\.nuget\\packages\\microsoft.dotnet.ilcompiler\\9.0.9\\microsoft.dotnet.ilcompiler.9.0.9.nupkg.sha512",
+    "C:\\Users\\MARIANA\\.nuget\\packages\\microsoft.net.illink.tasks\\9.0.9\\microsoft.net.illink.tasks.9.0.9.nupkg.sha512",
+    "C:\\Users\\MARIANA\\.nuget\\packages\\runtime.win-x64.microsoft.dotnet.ilcompiler\\9.0.9\\runtime.win-x64.microsoft.dotnet.ilcompiler.9.0.9.nupkg.sha512"
   ],
   "logs": []
 }
