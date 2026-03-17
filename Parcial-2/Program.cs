@@ -1,19 +1,11 @@
-﻿
-// Program.cs
-// Tienda para videojuego: compra y venta de objetos
-// Compatible con .NET 7
-// Copiar y pegar en un proyecto de consola y ejecutar.
-
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
 namespace GameStoreExample
 {
-    // Categorías permitidas
     public enum ItemCategory { Weapon, Armor, Accessory, Supply }
 
-    // Representa un artículo con nombre, categoría y precio positivo
     public class Item
     {
         public string Name { get; }
@@ -30,14 +22,11 @@ namespace GameStoreExample
         }
 
         public override string ToString() => $"{Name} [{Category}] - {Price}g";
-
         public override bool Equals(object? obj) =>
             obj is Item i && i.Name == Name && i.Category == Category && i.Price == Price;
-
         public override int GetHashCode() => HashCode.Combine(Name, Category, Price);
     }
 
-    // Entrada de inventario en la tienda / jugador
     public class InventoryEntry
     {
         public Item Item { get; private set; }
@@ -58,10 +47,25 @@ namespace GameStoreExample
         }
     }
 
-    // La tienda: mantiene inventario y operaciones de compra/venta
+    // Resultado de operaciones para uso en UI/menús
+    public class OperationResult
+    {
+        public bool Success { get; }
+        public string Message { get; }
+
+        public OperationResult(bool success, string message = "")
+        {
+            Success = success;
+            Message = message ?? "";
+        }
+
+        public static OperationResult Ok(string msg = "") => new(true, msg);
+        public static OperationResult Fail(string msg = "") => new(false, msg);
+    }
+
     public class Store
     {
-        // Usamos clave compuesta string "Name|Category" para permitir StringComparer.OrdinalIgnoreCase
+
         private readonly Dictionary<string, InventoryEntry> _inventory =
             new(StringComparer.OrdinalIgnoreCase);
 
@@ -76,7 +80,6 @@ namespace GameStoreExample
                     AddOrUpdate(it, q);
             }
 
-            // Requisito: al inicio, cualquier tienda debe tener al menos un artículo para vender (qty > 0)
             if (!_inventory.Any(kv => kv.Value.Quantity > 0))
                 throw new InvalidOperationException("La tienda debe iniciar con al menos un artículo con cantidad > 0.");
         }
@@ -84,8 +87,7 @@ namespace GameStoreExample
         private static string MakeKey(string name, ItemCategory cat) =>
             $"{name.Trim()}|{cat}";
 
-        // Añade o actualiza cantidad de un artículo en la tienda.
-        // Si existe el mismo (name,category) con distinto precio -> lanza excepción.
+
         public void AddOrUpdate(Item item, int qty)
         {
             if (item == null) throw new ArgumentNullException(nameof(item));
@@ -103,146 +105,123 @@ namespace GameStoreExample
             }
         }
 
-        // Obtiene la cantidad disponible de un artículo (0 si no existe)
+        // API pública: obtener cantidad disponible
         public int GetQuantity(string name, ItemCategory category)
         {
             var key = MakeKey(name, category);
             return _inventory.TryGetValue(key, out var entry) ? entry.Quantity : 0;
         }
 
-        // Intenta comprar (player compra desde la tienda) una lista de (Item, qty).
-        // Operación atómica: si falla por fondos insuficientes o cantidades insuficientes, no cambia nada.
-        // Devuelve true si la compra se completó.
-        public bool TryPurchase(Player player, List<(Item item, int qty)> cart)
+        // API pública: obtener una copia del inventario para mostrar en menús
+        // Devuelve tuplas (Item, Quantity)
+        public List<(Item item, int qty)> GetInventorySnapshot()
         {
-            if (player == null) throw new ArgumentNullException(nameof(player));
-            if (cart == null || cart.Count == 0) return false;
+            return _inventory.Values.Select(e => (e.Item, e.Quantity)).ToList();
+        }
 
-            // Validaciones previas: existencia y cantidades
+        // API pública: buscar un Item en la tienda por nombre y categoría (null si no existe)
+        public Item? FindItem(string name, ItemCategory category)
+        {
+            var key = MakeKey(name, category);
+            return _inventory.TryGetValue(key, out var entry) ? entry.Item : null;
+        }
+
+        // Compra atómica por lista de (Item, qty) — útil para menús que construyen un carrito
+        public OperationResult TryPurchase(Player player, List<(Item item, int qty)> cart)
+        {
+            if (player == null) return OperationResult.Fail("Jugador inválido.");
+            if (cart == null || cart.Count == 0) return OperationResult.Fail("Carrito vacío.");
+
             decimal total = 0m;
             var checks = new List<(string key, int qty, decimal price)>();
 
             foreach (var (it, qty) in cart)
             {
-                if (it == null) return false;
-                if (qty <= 0) return false;
+                if (it == null) return OperationResult.Fail("Item inválido en el carrito.");
+                if (qty <= 0) return OperationResult.Fail("Cantidad inválida en el carrito.");
 
                 var key = MakeKey(it.Name, it.Category);
-                if (!_inventory.TryGetValue(key, out var entry)) return false; // no existe
-                if (entry.Quantity < qty) return false; // cantidad insuficiente
-                if (entry.Item.Price != it.Price) return false; // precio en tienda distinto al del item pasado (consistencia)
+                if (!_inventory.TryGetValue(key, out var entry)) return OperationResult.Fail($"El artículo '{it.Name}' no existe en la tienda.");
+                if (entry.Quantity < qty) return OperationResult.Fail($"Cantidad insuficiente de '{it.Name}' en la tienda.");
+                if (entry.Item.Price != it.Price) return OperationResult.Fail($"Precio inconsistente para '{it.Name}'.");
                 total += it.Price * qty;
                 checks.Add((key, qty, it.Price));
             }
 
-            // Fondos del jugador
-            if (player.Gold < total) return false;
+            if (player.Gold < total) return OperationResult.Fail("Fondos insuficientes.");
 
-            // Aplicar cambios: restar oro del jugador, añadir items al inventario del jugador, restar cantidades en tienda
+            // Aplicar cambios
             player.Gold -= total;
-
             foreach (var (key, qty, price) in checks)
             {
                 var entry = _inventory[key];
-                // restar cantidad en tienda
                 entry.Subtract(qty);
-                // añadir al inventario del jugador (usar el Item almacenado en la tienda para mantener la referencia correcta)
                 player.AddToInventory(entry.Item, qty);
             }
 
-            return true;
+            return OperationResult.Ok($"Compra completada. Total: {total}g");
         }
 
-        // El jugador vende artículos a la tienda.
-        // Reglas:
-        // - Si la tienda ya tiene el mismo (name,category) con precio distinto -> la tienda no acepta (devuelve false).
-        // - Si la tienda no tiene el artículo, se añade con la cantidad vendida y con el precio del item que el jugador entrega.
-        // - Se incrementa el oro del jugador por price * qty y se reduce el inventario del jugador.
-        // - Operación atómica: si algo falla, no cambia nada.
-        public bool TryBuyFromPlayer(Player player, List<(Item item, int qty)> itemsToSell)
-        {
-            if (player == null) throw new ArgumentNullException(nameof(player));
-            if (itemsToSell == null || itemsToSell.Count == 0) return false;
 
-            // Validaciones: el jugador debe tener las cantidades que intenta vender
+        public OperationResult TryPurchaseByName(Player player, string name, ItemCategory category, int qty)
+        {
+            var item = FindItem(name, category);
+            if (item == null) return OperationResult.Fail("Artículo no encontrado.");
+            return TryPurchase(player, new List<(Item item, int qty)> { (item, qty) });
+        }
+
+
+        public OperationResult TryBuyFromPlayer(Player player, List<(Item item, int qty)> itemsToSell)
+        {
+            if (player == null) return OperationResult.Fail("Jugador inválido.");
+            if (itemsToSell == null || itemsToSell.Count == 0) return OperationResult.Fail("Lista de venta vacía.");
+
             foreach (var (it, qty) in itemsToSell)
             {
-                if (it == null) return false;
-                if (qty <= 0) return false;
-                if (player.GetQuantity(it.Name, it.Category) < qty) return false;
+                if (it == null) return OperationResult.Fail("Item inválido en la lista de venta.");
+                if (qty <= 0) return OperationResult.Fail("Cantidad inválida en la lista de venta.");
+                if (player.GetQuantity(it.Name, it.Category) < qty) return OperationResult.Fail($"No tienes suficientes '{it.Name}' para vender.");
             }
 
-            // Validar conflicto de precio en tienda
             foreach (var (it, qty) in itemsToSell)
             {
                 var key = MakeKey(it.Name, it.Category);
                 if (_inventory.TryGetValue(key, out var entry))
                 {
-                    if (entry.Item.Price != it.Price)
-                        return false; // la tienda no acepta porque ya vende el mismo name+category con distinto precio
+                    if (entry.Item.Price != it.Price) return OperationResult.Fail($"La tienda no acepta '{it.Name}' por conflicto de precio.");
                 }
             }
 
-            // Aplicar cambios: transferir cantidades y pagar al jugador
             decimal totalGain = 0m;
-            foreach (var (it, qty) in itemsToSell)
-            {
-                totalGain += it.Price * qty;
-            }
+            foreach (var (it, qty) in itemsToSell) totalGain += it.Price * qty;
 
-            // Realizar las operaciones: quitar del inventario del jugador y añadir a la tienda
             foreach (var (it, qty) in itemsToSell)
             {
-                // quitar del jugador
                 bool removed = player.RemoveFromInventory(it, qty);
-                if (!removed)
-                {
-                    // Esto no debería ocurrir porque validamos antes, pero por seguridad revertimos (no hay cambios aplicados aún)
-                    return false;
-                }
-
-                // añadir a la tienda (si existe, AddOrUpdate validará precio)
-                try
-                {
-                    AddOrUpdate(it, qty);
-                }
+                if (!removed) return OperationResult.Fail("Error al quitar items del jugador.");
+                try { AddOrUpdate(it, qty); }
                 catch
                 {
-                    // Si falla (por conflicto de precio), revertir: devolver los items al jugador
+
                     player.AddToInventory(it, qty);
-                    return false;
+                    return OperationResult.Fail("Conflicto al añadir a la tienda.");
                 }
             }
 
-            // Pagar al jugador
             player.Gold += totalGain;
-            return true;
+            return OperationResult.Ok($"Venta completada. Ganaste {totalGain}g");
         }
 
-        // Indica si la tienda puede vender algo (al menos un artículo con qty > 0)
         public bool CanSellAnything() => _inventory.Any(kv => kv.Value.Quantity > 0);
-
-        // Para depuración: lista de inventario
-        public IEnumerable<string> ListInventory()
-        {
-            foreach (var kv in _inventory.OrderBy(k => k.Key))
-            {
-                var entry = kv.Value;
-                yield return $"{entry.Item.Name} [{entry.Item.Category}] - {entry.Item.Price}g x{entry.Quantity}";
-            }
-        }
     }
 
-    // Jugador: oro y dos inventarios separados (Equipment y Supply)
     public class Player
     {
         public string Name { get; }
         public decimal Gold { get; set; }
 
-        // Usamos clave compuesta string "Name|Category" para permitir StringComparer.OrdinalIgnoreCase
         private readonly Dictionary<string, InventoryEntry> _equipment =
             new(StringComparer.OrdinalIgnoreCase);
-
         private readonly Dictionary<string, InventoryEntry> _supply =
             new(StringComparer.OrdinalIgnoreCase);
 
@@ -257,7 +236,7 @@ namespace GameStoreExample
 
         private static bool IsConsumable(ItemCategory cat) => cat == ItemCategory.Supply;
 
-        // Añade items al inventario del jugador (separa por Equipment o Supply)
+
         public void AddToInventory(Item item, int qty)
         {
             if (item == null) throw new ArgumentNullException(nameof(item));
@@ -266,18 +245,11 @@ namespace GameStoreExample
             var key = MakeKey(item.Name, item.Category);
             var target = IsConsumable(item.Category) ? _supply : _equipment;
 
-            if (target.TryGetValue(key, out var entry))
-            {
-                // Si existe, simplemente sumar cantidad
-                entry.Add(qty);
-            }
-            else
-            {
-                target[key] = new InventoryEntry(item, qty);
-            }
+            if (target.TryGetValue(key, out var entry)) entry.Add(qty);
+            else target[key] = new InventoryEntry(item, qty);
         }
 
-        // Quitar items del inventario del jugador. Devuelve true si se pudo quitar.
+
         public bool RemoveFromInventory(Item item, int qty)
         {
             if (item == null) throw new ArgumentNullException(nameof(item));
@@ -294,7 +266,7 @@ namespace GameStoreExample
             return true;
         }
 
-        // Obtener cantidad de un item en el inventario del jugador
+
         public int GetQuantity(string name, ItemCategory category)
         {
             var key = MakeKey(name, category);
@@ -302,36 +274,28 @@ namespace GameStoreExample
             return target.TryGetValue(key, out var entry) ? entry.Quantity : 0;
         }
 
-        // Para depuración: listar inventario
-        public IEnumerable<string> ListInventory()
+
+        public List<(Item item, int qty, string group)> GetInventorySnapshot()
         {
-            foreach (var kv in _equipment.OrderBy(k => k.Key))
-            {
-                var entry = kv.Value;
-                yield return $"[Equipment] {entry.Item.Name} [{entry.Item.Category}] - {entry.Item.Price}g x{entry.Quantity}";
-            }
-            foreach (var kv in _supply.OrderBy(k => k.Key))
-            {
-                var entry = kv.Value;
-                yield return $"[Supply] {entry.Item.Name} [{entry.Item.Category}] - {entry.Item.Price}g x{entry.Quantity}";
-            }
+            var list = new List<(Item item, int qty, string group)>();
+            list.AddRange(_equipment.Values.Select(e => (e.Item, e.Quantity, "Equipment")));
+            list.AddRange(_supply.Values.Select(e => (e.Item, e.Quantity, "Supply")));
+            return list;
         }
     }
 
-    // Ejemplo de uso y pruebas básicas
     internal class Program
     {
         private static void Main()
         {
             try
             {
-                // Crear algunos items
+
                 var sword = new Item("Short Sword", ItemCategory.Weapon, 10m);
                 var shield = new Item("Wooden Shield", ItemCategory.Armor, 8m);
                 var ring = new Item("Ring of Luck", ItemCategory.Accessory, 25m);
                 var potion = new Item("Health Potion", ItemCategory.Supply, 3m);
 
-                // Inventario inicial de la tienda (al menos un artículo con qty > 0)
                 var initial = new List<(Item item, int qty)>
                 {
                     (sword, 5),
@@ -340,94 +304,91 @@ namespace GameStoreExample
                 };
 
                 var store = new Store("Mercado del Pueblo", initial);
-
-                // Crear jugador
                 var player = new Player("Miguel", startingGold: 50m);
 
-                Console.WriteLine("Inventario inicial de la tienda:");
-                foreach (var line in store.ListInventory()) Console.WriteLine("  " + line);
-                Console.WriteLine();
 
-                Console.WriteLine($"{player.Name} tiene {player.Gold}g");
-                Console.WriteLine("Compra: 1 Short Sword, 3 Health Potion (compra múltiple en una sola transacción)");
-
-                // Preparar carrito
-                var cart = new List<(Item item, int qty)>
+                while (true)
                 {
-                    (sword, 1),
-                    (potion, 3)
-                };
+                    Console.WriteLine();
+                    Console.WriteLine("=== MENÚ PRINCIPAL ===");
+                    Console.WriteLine("1) Ver inventario de la tienda");
+                    Console.WriteLine("2) Ver inventario del jugador");
+                    Console.WriteLine("3) Comprar por nombre");
+                    Console.WriteLine("4) Comprar con carrito ");
+                    Console.WriteLine("5) Vender al comerciante ");
+                    Console.WriteLine("0) Salir");
+                    Console.Write("Elige una opción: ");
+                    var opt = Console.ReadLine()?.Trim();
 
-                bool bought = store.TryPurchase(player, cart);
-                Console.WriteLine(bought ? "Compra completada." : "Compra fallida.");
+                    if (opt == "0") break;
 
-                Console.WriteLine($"{player.Name} ahora tiene {player.Gold}g");
-                Console.WriteLine("Inventario del jugador:");
-                foreach (var line in player.ListInventory()) Console.WriteLine("  " + line);
+                    switch (opt)
+                    {
+                        case "1":
+                            Console.WriteLine($"Inventario de {store.Name}:");
+                            foreach (var (it, q) in store.GetInventorySnapshot())
+                                Console.WriteLine($"  {it.Name} [{it.Category}] - {it.Price}g x{q}");
+                            break;
 
-                Console.WriteLine();
-                Console.WriteLine("Inventario de la tienda después de la compra:");
-                foreach (var line in store.ListInventory()) Console.WriteLine("  " + line);
+                        case "2":
+                            Console.WriteLine($"{player.Name} - Oro: {player.Gold}g");
+                            foreach (var (it, q, group) in player.GetInventorySnapshot())
+                                Console.WriteLine($"  [{group}] {it.Name} [{it.Category}] - {it.Price}g x{q}");
+                            break;
 
-                // Intento de compra con fondos insuficientes (compra atómica)
-                Console.WriteLine();
-                Console.WriteLine("Intento de compra con fondos insuficientes: 2 Ring of Luck (precio 25g cada uno)");
-                var cart2 = new List<(Item item, int qty)> { (ring, 2) }; // total 50g
-                bool bought2 = store.TryPurchase(player, cart2);
-                Console.WriteLine(bought2 ? "Compra completada." : "Compra fallida por fondos o disponibilidad.");
-                Console.WriteLine($"{player.Name} tiene {player.Gold}g (no debe haber cambiado si la compra falló)");
+                        case "3":
+                            Console.Write("Nombre del artículo: ");
+                            var name = Console.ReadLine() ?? "";
+                            Console.Write("Categoría (Weapon/Armor/Accessory/Supply): ");
+                            var catStr = Console.ReadLine() ?? "";
+                            if (!Enum.TryParse<ItemCategory>(catStr, true, out var cat))
+                            {
+                                Console.WriteLine("Categoría inválida.");
+                                break;
+                            }
+                            Console.Write("Cantidad: ");
+                            if (!int.TryParse(Console.ReadLine(), out var qty) || qty <= 0)
+                            {
+                                Console.WriteLine("Cantidad inválida.");
+                                break;
+                            }
 
-                // Venta del jugador a la tienda
-                Console.WriteLine();
-                Console.WriteLine("El jugador vende 1 Short Sword a la tienda.");
-                var sellList = new List<(Item item, int qty)> { (sword, 1) };
-                bool sold = store.TryBuyFromPlayer(player, sellList);
-                Console.WriteLine(sold ? "Venta completada." : "Venta fallida.");
-                Console.WriteLine($"{player.Name} ahora tiene {player.Gold}g");
-                Console.WriteLine("Inventario del jugador:");
-                foreach (var line in player.ListInventory()) Console.WriteLine("  " + line);
-                Console.WriteLine("Inventario de la tienda:");
-                foreach (var line in store.ListInventory()) Console.WriteLine("  " + line);
+                            var result = store.TryPurchaseByName(player, name, cat, qty);
+                            Console.WriteLine(result.Success ? $"OK: {result.Message}" : $"Error: {result.Message}");
+                            break;
 
-                // Intento de añadir un artículo con mismo name+category pero distinto precio -> debe lanzar excepción
-                Console.WriteLine();
-                Console.WriteLine("Intento de añadir a la tienda un 'Short Sword' con precio distinto (conflicto de precio).");
-                var swordDifferentPrice = new Item("Short Sword", ItemCategory.Weapon, 12m);
-                try
-                {
-                    store.AddOrUpdate(swordDifferentPrice, 1);
-                    Console.WriteLine("Se añadió (esto no debería ocurrir).");
+                        case "4":
+
+                            var cart = new List<(Item item, int qty)>();
+                            var it1 = store.FindItem("Short Sword", ItemCategory.Weapon);
+                            if (it1 != null) cart.Add((it1, 1));
+                            var it2 = store.FindItem("Health Potion", ItemCategory.Supply);
+                            if (it2 != null) cart.Add((it2, 2));
+                            var resCart = store.TryPurchase(player, cart);
+                            Console.WriteLine(resCart.Success ? $"OK: {resCart.Message}" : $"Error: {resCart.Message}");
+                            break;
+
+                        case "5":
+
+                            var sellItem = new Item("Short Sword", ItemCategory.Weapon, 10m);
+                            if (player.GetQuantity(sellItem.Name, sellItem.Category) > 0)
+                            {
+                                var sellRes = store.TryBuyFromPlayer(player, new List<(Item item, int qty)> { (sellItem, 1) });
+                                Console.WriteLine(sellRes.Success ? $"OK: {sellRes.Message}" : $"Error: {sellRes.Message}");
+                            }
+                            else
+                            {
+                                Console.WriteLine("No tienes Short Sword para vender en este ejemplo.");
+                            }
+                            break;
+
+                        default:
+                            Console.WriteLine("Opción no válida.");
+                            break;
+                    }
                 }
-                catch (Exception ex)
-                {
-                    Console.WriteLine("Error esperado al añadir: " + ex.Message);
-                }
 
-                // Agregar un nuevo artículo (ring) a la tienda
-                Console.WriteLine();
-                Console.WriteLine("Añadiendo Ring of Luck a la tienda (cantidad 1).");
-                store.AddOrUpdate(ring, 1);
-                foreach (var line in store.ListInventory()) Console.WriteLine("  " + line);
-
-                // Intento de comprar todo el inventario de un artículo y luego comprobar que no se puede comprar más
-                Console.WriteLine();
-                Console.WriteLine("Comprando todas las Health Potion restantes (cantidad igual a la disponible).");
-                int potionsAvailable = store.GetQuantity("Health Potion", ItemCategory.Supply);
-                var buyAllPotions = new List<(Item item, int qty)> { (potion, potionsAvailable) };
-                bool boughtAll = store.TryPurchase(player, buyAllPotions);
-                Console.WriteLine(boughtAll ? "Compra completada." : "Compra fallida.");
-                Console.WriteLine("Cantidad de Health Potion en tienda ahora: " + store.GetQuantity("Health Potion", ItemCategory.Supply));
-                Console.WriteLine("Intentando comprar 1 Health Potion más (debe fallar):");
-                var buyOneMore = new List<(Item item, int qty)> { (potion, 1) };
-                bool boughtMore = store.TryPurchase(player, buyOneMore);
-                Console.WriteLine(boughtMore ? "Compra completada (ERROR)." : "Compra fallida como se esperaba.");
-
-                // Comprobar si la tienda puede vender algo
-                Console.WriteLine();
-                Console.WriteLine("¿La tienda puede vender algo? " + (store.CanSellAnything() ? "Sí" : "No"));
-
-                Console.WriteLine();
-                Console.WriteLine("Fin de la demostración.");
+                Console.WriteLine("Saliendo. ¡Hasta luego!");
             }
             catch (Exception ex)
             {
