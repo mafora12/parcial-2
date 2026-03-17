@@ -1,9 +1,8 @@
 ﻿using NUnit.Framework;
+using GameStore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using GameStore;
-
 
 namespace GameStore.Tests
 {
@@ -24,13 +23,11 @@ namespace GameStore.Tests
             potion = new Item("Health Potion", ItemCategory.Supply, 3m);
         }
 
-
-
         [Test]
         public void Item_Creation_Valid()
         {
             var it = new Item("Bow", ItemCategory.Weapon, 15m);
-            Assert.AreEqual("Bow", it.Name);
+            Assert.That(it.Name, Is.EqualTo("Bow"));
         }
 
         [Test]
@@ -47,18 +44,15 @@ namespace GameStore.Tests
                 new Item("Bad", ItemCategory.Supply, 0m));
         }
 
-
-
         [Test]
         public void Store_Creation_Valid()
         {
             var store = new Store("Tienda", new List<(Item, int)>
             {
-                (sword,1)
+                (sword, 1)
             });
 
-            Assert.AreEqual(1,
-                store.GetQuantity("Short Sword", ItemCategory.Weapon));
+            Assert.That(store.GetQuantity("Short Sword", ItemCategory.Weapon), Is.EqualTo(1));
         }
 
         [Test]
@@ -67,20 +61,16 @@ namespace GameStore.Tests
             Assert.Throws<InvalidOperationException>(() =>
                 new Store("Empty", new List<(Item, int)>
                 {
-                    (sword,0)
+                    (sword, 0)
                 }));
         }
-
- 
 
         [Test]
         public void Player_Creation_Gold()
         {
             var p = new Player("Hero", 100);
-            Assert.AreEqual(100, p.Gold);
+            Assert.That(p.Gold, Is.EqualTo(100));
         }
-
-
 
         [Test]
         public void Purchase_Success()
@@ -93,8 +83,8 @@ namespace GameStore.Tests
             var res = store.TryPurchase(player,
                 new List<(Item, int)> { (sword, 1) });
 
-            Assert.IsTrue(res.Success);
-            Assert.AreEqual(40, player.Gold);
+            Assert.That(res.Success, Is.True);
+            Assert.That(player.Gold, Is.EqualTo(40));
         }
 
         [Test]
@@ -108,7 +98,7 @@ namespace GameStore.Tests
             var res = store.TryPurchase(player,
                 new List<(Item, int)> { (ring, 1) });
 
-            Assert.IsFalse(res.Success);
+            Assert.That(res.Success, Is.False);
         }
 
         [Test]
@@ -122,7 +112,7 @@ namespace GameStore.Tests
             var res = store.TryPurchase(player,
                 new List<(Item, int)> { (potion, 2) });
 
-            Assert.IsFalse(res.Success);
+            Assert.That(res.Success, Is.False);
         }
 
         [Test]
@@ -142,10 +132,8 @@ namespace GameStore.Tests
             storeB.TryPurchase(player,
                 new List<(Item, int)> { (potion, 2) });
 
-            Assert.AreEqual(84, player.Gold);
+            Assert.That(player.Gold, Is.EqualTo(84));
         }
-
-
 
         [Test]
         public void Inventory_Grouping()
@@ -153,8 +141,8 @@ namespace GameStore.Tests
             var store = new Store("Shop",
                 new List<(Item, int)>
                 {
-                    (sword,2),
-                    (potion,5)
+                    (sword, 2),
+                    (potion, 5)
                 });
 
             var player = new Player("Hero", 100);
@@ -162,17 +150,13 @@ namespace GameStore.Tests
             store.TryPurchase(player,
                 new List<(Item, int)>
                 {
-                    (sword,1),
-                    (potion,2)
+                    (sword, 1),
+                    (potion, 2)
                 });
 
-            Assert.AreEqual(1,
-                player.GetQuantity("Short Sword", ItemCategory.Weapon));
-
-            Assert.AreEqual(2,
-                player.GetQuantity("Health Potion", ItemCategory.Supply));
+            Assert.That(player.GetQuantity("Short Sword", ItemCategory.Weapon), Is.EqualTo(1));
+            Assert.That(player.GetQuantity("Health Potion", ItemCategory.Supply), Is.EqualTo(2));
         }
-
 
         [Test]
         public void Sell_To_Store()
@@ -186,8 +170,8 @@ namespace GameStore.Tests
             var res = store.TryBuyFromPlayer(player,
                 new List<(Item, int)> { (sword, 1) });
 
-            Assert.IsTrue(res.Success);
-            Assert.AreEqual(10, player.Gold);
+            Assert.That(res.Success, Is.True);
+            Assert.That(player.Gold, Is.EqualTo(10));
         }
     }
 }
