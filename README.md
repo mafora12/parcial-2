@@ -1,5 +1,6 @@
 # parcial-2
 
-Miguel Santana
-Mariana Flores
-Juan José Hernandez
+Miguel Santana  
+Mariana Florez  
+Juan José Hernandez  
+ 
