@@ -1,3 +1,5 @@
 # parcial-2
 
-sdrflasdkjuhfjkldsafhfvikodvdgvdfvgfd
+Miguel Santana
+Mariana Flores
+Juan José Hernandez
